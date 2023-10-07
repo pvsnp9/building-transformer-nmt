@@ -7,6 +7,7 @@ def get_cfg():
         "lr": 10**-4,
         "seq_len": 350,
         "d_model": 512,
+        "d_src": "opus_books",
         "lang_src": "en",
         "lang_tgt": "it",
         "model_folder": "models",
@@ -24,3 +25,13 @@ def get_model_file_path(cfg, epoch):
     
     return str(Path('.')/ model_folder / model_filename)
     
+    
+# Find the latest weights file in the weights folder
+def latest_model_file_path(cfg):
+    model_folder = f"{cfg['model_folder']}"
+    model_filename = f"{cfg['model_basename']}*"
+    model_files = list(Path(model_folder).glob(model_filename))
+    if len(model_files) == 0:
+        return None
+    model_files.sort()
+    return str(model_files[-1])

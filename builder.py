@@ -24,7 +24,7 @@ def build_transformer(src_vocab_size, target_vocab_size, src_seq_len, target_seq
     for _ in range(N):
         enc_attention_block = MultiHeadAttention(d_model, h, dropout)
         ff_block = FeedForward(d_model, d_ff, dropout)
-        encoder_block = EncoderBlock(enc_attention_block, ff_block, dropout)
+        encoder_block = EncoderBlock(d_model, enc_attention_block, ff_block, dropout)
         encoder_blocks.append(encoder_block)
     
     # decoder blocks
@@ -33,12 +33,12 @@ def build_transformer(src_vocab_size, target_vocab_size, src_seq_len, target_seq
         decoder_attnetion_block = MultiHeadAttention(d_model, h, dropout)
         decoder_cross_attention_block = MultiHeadAttention(d_model, h, dropout)
         ff_block = FeedForward(d_model, d_ff, dropout)
-        decoder_block = DecoderBlock(decoder_attnetion_block, decoder_cross_attention_block, ff_block, dropout)
+        decoder_block = DecoderBlock(d_model, decoder_attnetion_block, decoder_cross_attention_block, ff_block, dropout)
         decoder_blocks.append(decoder_block)
         
     # create a complete encoder decoder 
-    encoder = Encoder(nn.ModuleList(encoder_blocks))
-    decoder = Decoder(nn.ModuleList(decoder_blocks))
+    encoder = Encoder(d_model, nn.ModuleList(encoder_blocks))
+    decoder = Decoder(d_model, nn.ModuleList(decoder_blocks))
     
     # projection layer
     projection = Projection(d_model, target_vocab_size)
@@ -49,6 +49,6 @@ def build_transformer(src_vocab_size, target_vocab_size, src_seq_len, target_seq
     # parameter initialization
     for p in transformer.parameters():
         if p.dim() > 1:
-            nn.init.xavier_uniform(p)
+            nn.init.xavier_uniform_(p)
     
     return transformer

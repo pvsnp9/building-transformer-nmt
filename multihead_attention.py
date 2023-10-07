@@ -9,13 +9,13 @@ class MultiHeadAttention(nn.Module):
         self.h = h
         
         assert d_model % h == 0, "d_model is not divisible by h"
-        self.d_k = d_model //h
+        self.d_k = d_model // h
         
-        self.w_q = nn.Linear(d_model, d_model)
-        self.w_k = nn.Linear(d_model, d_model)
-        self.w_v = nn.Linear(d_model, d_model)
+        self.w_q = nn.Linear(d_model, d_model, bias=False)
+        self.w_k = nn.Linear(d_model, d_model, bias=False)
+        self.w_v = nn.Linear(d_model, d_model, bias=False)
         
-        self.w_o = nn.Linear(d_model, d_model)
+        self.w_o = nn.Linear(d_model, d_model, bias=False)
         self.dropout = nn.Dropout(dropout)
     
     @staticmethod
@@ -25,12 +25,12 @@ class MultiHeadAttention(nn.Module):
         #(bathc, h, seq_len, d_k) -> (bathc, h, seq_len, seq_len)
         attention_scores = (q @ k.transpose(-2, -1)) / math.sqrt(d_k)
         if mask is not None:
-            attention_scores.masked_fill(mask==0, -math.inf)
+            attention_scores.masked_fill(mask==0, -1e9)
         #(batch, h, seq_len, seq_len)
         attention_scores = attention_scores.softmax(dim=-1)
         if dropout is not None:
             attention_scores = dropout(attention_scores)
-            
+        # (batch, h, seq_len, seq_len) --> (batch, h, seq_len, d_k)   
         return (attention_scores @ v), attention_scores
         
     def forward(self, q, k, v, mask):
