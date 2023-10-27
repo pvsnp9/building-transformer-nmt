@@ -3,7 +3,7 @@ import torch.nn as nn
 import math
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, d_model, h, dropout):
+    def __init__(self, d_model:int, h:int, dropout:float):
         super().__init__()
         self.d_model = d_model
         self.h = h
@@ -19,13 +19,13 @@ class MultiHeadAttention(nn.Module):
         self.dropout = nn.Dropout(dropout)
     
     @staticmethod
-    def attention(q, k, v, mask, dropout):
+    def attention(q, k, v, mask, dropout:nn.Dropout):
         d_k = q.shape[-1]
         
         #(bathc, h, seq_len, d_k) -> (bathc, h, seq_len, seq_len)
         attention_scores = (q @ k.transpose(-2, -1)) / math.sqrt(d_k)
         if mask is not None:
-            attention_scores.masked_fill(mask==0, -1e9)
+            attention_scores.masked_fill_(mask==0, -1e9)
         #(batch, h, seq_len, seq_len)
         attention_scores = attention_scores.softmax(dim=-1)
         if dropout is not None:

@@ -73,12 +73,12 @@ def get_dataset(cfg):
 
 
 def get_model(cfg, vocab_src_len, vocab_target_len):
-    model = build_transformer(vocab_src_len, vocab_target_len, cfg["seq_len"], cfg["seq_len"],d_model=cfg['d_model'])
+    model = build_transformer(vocab_src_len, vocab_target_len, cfg["seq_len"], cfg["seq_len"],d_model=cfg['d_model'],N=cfg['num_layers'], h=cfg["num_heads"])
     return model
 
 def train_model(cfg):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    if (device == 'cuda'):
+    if (device.type == 'cuda'):
         print(f"Device name: {torch.cuda.get_device_name(device.index)}")
         print(f"Device memory: {torch.cuda.get_device_properties(device.index).total_memory / 1024 ** 3} GB")
     
@@ -186,7 +186,7 @@ def eval_model(model, val_ds, target_tokenizer, max_len, device, print_msg, num_
 
             assert encoder_input.size(0) == 1, "Validation must have single batch"
             
-            model_out = greedy_decode(model, encoder_input, encoder_mask, target_tokenizer, max_len, device)
+            model_out =  greedy_decode(model, encoder_input, encoder_mask, target_tokenizer, max_len, device)
             
             src_txt = batch["src_txt"][0]
             tgt_txt = batch["tgt_txt"][0]

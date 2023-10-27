@@ -3,6 +3,8 @@ from pathlib import Path
 def get_cfg():
     return {
         "batch_size": 8,
+        "num_heads": 8,
+        "num_layers": 6,
         "num_epochs": 30,
         "lr": 10**-4,
         "seq_len": 350,
@@ -25,6 +27,7 @@ def get_model_file_path(cfg, epoch):
     
     return str(Path('.')/ model_folder / model_filename)
     
+
     
 # Find the latest weights file in the weights folder
 def latest_model_file_path(cfg):

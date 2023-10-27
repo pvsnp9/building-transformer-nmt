@@ -2,11 +2,12 @@ import torch
 import torch.nn as nn 
 from multihead_attention import MultiHeadAttention
 from residual_connection import ResidualConnection
+from feedforward import FeedForward
 from layernorm import LayerNormalization
 
 
 class EncoderBlock(nn.Module):
-    def __init__(self, features, attention_block, ff_block, dropout) -> None:
+    def __init__(self, features:int, attention_block:MultiHeadAttention, ff_block:FeedForward, dropout:float) -> None:
         super().__init__()
         
         self.attention_block = attention_block

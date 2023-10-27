@@ -19,7 +19,7 @@ def build_transformer(src_vocab_size, target_vocab_size, src_seq_len, target_seq
     src_pos_emb = PositionalEncoding(d_model, src_seq_len, dropout)
     target_pos_emb = PositionalEncoding(d_model, target_seq_len, dropout)
     
-    # encider blocks
+    # encoder blocks
     encoder_blocks = []
     for _ in range(N):
         enc_attention_block = MultiHeadAttention(d_model, h, dropout)
